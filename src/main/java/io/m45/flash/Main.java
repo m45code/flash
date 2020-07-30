@@ -12,18 +12,18 @@ import jssc.SerialPortList;
  */
 public class Main {
     
-    private final static String COM_PORT = "COM11";
+    private final static String COM_PORT = "COM3";
     
-    private final static int BAUD = 115200;
+    private final static int BAUD = 9600;
     private final static int STOP_BITS = 1;
     private final static int DATA_BITS = 8;
     private final static int PARITY_BITS = 0;
     
-    private final static int[] parameters = {   
-                                        000,    000,    000,    000,    000,
-                                        010,    010,    010,    010,    010,
-                                        000,    000,    000,    000,    000,
-                                        -1
+    private final static byte[] parameters = {   
+                                        00,    00,    00,    00,    00,
+                                        00,    100,    100,    100,    00,
+                                        00,    00,    00,    00,    00,
+                                        99
                                 };
     
     public static void main(String[] data) {
@@ -38,12 +38,22 @@ public class Main {
         
         try {
             boolean portOpened = serialPort.openPort();
-            serialPort.setParams(BAUD, DATA_BITS, STOP_BITS, PARITY_BITS);
-            serialPort.writeIntArray(parameters);
-        } catch (SerialPortException ex) {
+            serialPort.setParams(BAUD, DATA_BITS, STOP_BITS, PARITY_BITS, false, false);
+            
+            Thread.sleep(1000);
+            
+            for( int i = 0; i < parameters.length; i++) {
+                serialPort.writeByte((byte)parameters[i]);
+            }
+            
+//            serialPort.writeBytes(parameters);
+            serialPort.closePort();
+        } catch (Exception ex) {
             System.out.println("Caught exception");
             ex.printStackTrace();
         }
+        
+        
         
     }
     

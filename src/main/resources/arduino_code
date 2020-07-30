@@ -1,0 +1,61 @@
+const int NUMBER_OF_SLOTS = 15;
+int p[50];
+const int SLOT_LENGTH = 200;
+int new_data = 0;
+const int LED_PIN = 9;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  if (Serial.available() > 0) {
+
+    int incomingByte = Serial.read();
+    int counter = 0;
+    new_data = 1;
+    
+    while (incomingByte != 99) {
+
+      p[counter++] = incomingByte;
+      incomingByte = Serial.read();
+
+      digitalWrite(LED_PIN, HIGH);
+      delay(100);
+      digitalWrite(LED_PIN, LOW);
+      delay(100);
+
+
+      
+    }
+
+    
+  }
+
+  delay(1000);
+
+  if (new_data == 1) {
+
+    new_data = 0;
+    
+    digitalWrite(LED_PIN, HIGH);
+
+    for (int i = 0; i < sizeof(p)/sizeof(p[0]); i++) {
+
+      if (p[i] == 0) {
+        delay ( SLOT_LENGTH );
+      } else {
+        delay (SLOT_LENGTH - p[i]);
+        digitalWrite(LED_PIN, LOW);
+        delay ( p[i]);
+        digitalWrite(LED_PIN, HIGH);
+      }
+    }
+
+    digitalWrite(LED_PIN, LOW);
+    
+  }
+
+
+}
